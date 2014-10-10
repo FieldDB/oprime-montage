@@ -10,7 +10,7 @@ var ContextualizableComponent = require("core/contextualizable-component").Conte
     RangeController = require("montage/core/range-controller").RangeController,
     PromiseController = require("montage/core/promise-controller").PromiseController,
     Promise = require("montage/core/promise").Promise,
-    AudioPlayer = require("core/audio-player").AudioPlayer,
+    AudioPlayer = require("fielddb/api/audio_video/AudioPlayer").AudioPlayer,
 
     Corpus = require("fielddb/api/corpus/Corpus").Corpus,
     SubExperiment = require("fielddb/api/data_list/SubExperimentDataList").SubExperimentDataList,
@@ -182,7 +182,7 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
                     var redirectUrl = window.location.href.replace(/index\.html.*$/, "") + "index.html#/phophlo/demo_data";
                     window.location.replace(redirectUrl);
                     setTimeout(function() {
-                        window.location.reload()
+                        window.location.reload();
                     }, 1000);
                     return;
                 }
@@ -285,7 +285,7 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
                     console.log("Corpus cannot be loaded, data cannot be decrypted, removing this db from the url.", result);
                     window.location.replace(window.location.href.replace(/#.*$/, "#/phophlo/demo_data"));
                     setTimeout(function() {
-                        window.location.reload()
+                        window.location.reload();
                     }, 1000);
                     return;
                 });
@@ -360,7 +360,7 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
                         console.warn("logged in as anonymoussailsuser", loginresult);
                         window.location.replace(window.location.href.replace(/#.*$/, "#/phophlo/demo_data"));
                         setTimeout(function() {
-                            window.location.reload()
+                            window.location.reload();
                         }, 1000);
                         return;
                     }, function(err) {
@@ -558,6 +558,7 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
             }
         }
      */
+    
     nextStimulus: {
         value: function() {
             if (this.canBeResumed) {
@@ -586,6 +587,10 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
             }
             this.templateObjects.reinforcement.next();
             try {
+                this.itemNumberInExperiment = this.itemNumberInExperiment || 0;
+                this.itemNumberInExperiment = this.itemNumberInExperiment + 1;
+                this._currentTestBlock.trials._collection[this._currentStimulusIndex].itemNumberInExperiment = this.itemNumberInExperiment;
+                this._currentTestBlock.trials._collection[this._currentStimulusIndex].subexperimentLabel = this._currentTestBlock.label;                
                 this._currentStimulus.load(this._currentTestBlock.trials._collection[this._currentStimulusIndex]);
             } catch (ERROR) {
                 console.log("ERROR LOADING THE STIMULUS! ", ERROR);

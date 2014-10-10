@@ -49,7 +49,12 @@ exports.AbstractStimulus = ContextualizableComponent.specialize( /** @lends Stim
 			if (!responseEvent) {
 				throw "Cannot add response without the x y information found in the touch/click responseEvent";
 			}
-
+			this.audioPlayStartTime = 0;
+			if (this.application.audioPlayer.src && this.application.audioPlayer.src === this.model.audioFile) {
+				this.audioPlayStartTime = this.application.audioPlayer.audioPlayStartTime;
+			} else {
+				this.audioPlayStartTime = 0;
+			}
 			var reactionTimeEnd = Date.now();
 			var audioDuration = this.application.audioPlayer.getDuration(this.model.audioFile) || 0;
 			if (audioDuration) {
@@ -102,8 +107,10 @@ exports.AbstractStimulus = ContextualizableComponent.specialize( /** @lends Stim
 				}
 			}
 			var response = {
-				"reactionTimeAudioOffset": reactionTimeEnd - this.reactionTimeStart - audioDuration,
-				"reactionTimeAudioOnset": reactionTimeEnd - this.reactionTimeStart,
+				"reactionTimeAudioOffset": reactionTimeEnd - this.audioPlayStartTime - audioDuration,
+				"reactionTimeAudioOnset": reactionTimeEnd - this.audioPlayStartTime,
+				"reactionTimeVisualOffset": reactionTimeEnd - this.reactionTimeStart,
+				"reactionTimeVisualOnset": reactionTimeEnd - this.reactionTimeStart,
 				"x": responseEvent.x,
 				"y": responseEvent.y,
 				"pageX": responseEvent.pageX,
@@ -230,7 +237,6 @@ exports.AbstractStimulus = ContextualizableComponent.specialize( /** @lends Stim
 				this.setupFirstPlay();
 				this.addOwnPropertyChangeListener("src", this);
 			}
-			this.reactionTimeStart = Date.now();
 		}
 	},
 
@@ -336,11 +342,16 @@ exports.AbstractStimulus = ContextualizableComponent.specialize( /** @lends Stim
 				this.model.nonResponses = [];
 			}
 
+			this.itemNumberInExperiment = model.itemNumberInExperiment;
+			this.subexperimentLabel = model.subexperimentLabel;
+
 			this.responsesController = new RangeController().initWithContent(this.model.responses);
 			this.experimenterId = this.application.experiment.experimenter.id;
 			this.participantId = this.application.experiment.participant.id;
 			// Not playing audio by default, child must call it.
 			// this.playAudio(2000);
+			this.reactionTimeStart = Date.now();
+
 		}
 	}
 });

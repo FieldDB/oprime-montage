@@ -8,6 +8,7 @@ var Component = require("montage/ui/component").Component;
  * @class Audio
  * @extends Component
  */
+console.warn("audio.reel is deprecated use fielddb/api/audio_video/HTML5Audio instead");
 exports.Audio = Component.specialize( /** @lends Audio# */ {
     constructor: {
         value: function Audio() {
