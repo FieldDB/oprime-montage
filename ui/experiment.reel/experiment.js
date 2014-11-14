@@ -282,12 +282,16 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
                         });
                     }
                 }, function(result) {
-                    console.log("Corpus cannot be loaded, data cannot be decrypted, removing this db from the url.", result);
-                    window.location.replace(window.location.href.replace(/#.*$/, "#/phophlo/demo_data"));
-                    setTimeout(function() {
-                        window.location.reload();
-                    }, 1000);
-                    return;
+                    if (result.target.status === 0) {
+                        alert("You are most probably offline, you will not be able to play the game.");
+                    } else {
+                        console.log("Corpus cannot be loaded, data cannot be decrypted, removing this db from the url.", result);
+                        window.location.replace(window.location.href.replace(/#.*$/, "#/phophlo/demo_data"));
+                        setTimeout(function() {
+                            window.location.reload();
+                        }, 1000);
+                        return;
+                    }
                 });
             }
             this.corpus = this.application.corpus;
@@ -558,7 +562,7 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
             }
         }
      */
-    
+
     nextStimulus: {
         value: function() {
             if (this.canBeResumed) {
@@ -590,7 +594,7 @@ exports.Experiment = ContextualizableComponent.specialize( /** @lends Experiment
                 this.itemNumberInExperiment = this.itemNumberInExperiment || 0;
                 this.itemNumberInExperiment = this.itemNumberInExperiment + 1;
                 this._currentTestBlock.trials._collection[this._currentStimulusIndex].itemNumberInExperiment = this.itemNumberInExperiment;
-                this._currentTestBlock.trials._collection[this._currentStimulusIndex].subexperimentLabel = this._currentTestBlock.label;                
+                this._currentTestBlock.trials._collection[this._currentStimulusIndex].subexperimentLabel = this._currentTestBlock.label;
                 this._currentStimulus.load(this._currentTestBlock.trials._collection[this._currentStimulusIndex]);
             } catch (ERROR) {
                 console.log("ERROR LOADING THE STIMULUS! ", ERROR);
